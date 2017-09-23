@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="152dp"
+        android:layout_marginTop="92dp"
+        android:text="@string/beginDate" />
+
+    <EditText
+        android:id="@+id/etDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvDate"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="time" />
+
+    <TextView
+        android:id="@+id/tvOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etDate"
+        android:layout_centerHorizontal="true"
+        android:text="@string/sort"
+        />
+
+    <Spinner
+        android:id="@+id/mySpinner"
+        android:layout_width="wrap_content"
+        android:entries="@array/planets_array"
+        android:prompt="@string/planets_prompt"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvOrder"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tvCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mySpinner"
+        android:layout_centerHorizontal="true"
+        android:text="@string/checkBox"
+        />
+
+
+
+    <CheckBox android:id="@+id/checkbox_arts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvCheck"
+        android:layout_centerHorizontal="true"
+        android:text="@string/arts" />
+    <CheckBox android:id="@+id/checkbox_fashion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkbox_arts"
+        android:layout_centerHorizontal="true"
+        android:text="@string/fashion" />
+    <CheckBox android:id="@+id/checkbox_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkbox_fashion"
+        android:layout_centerHorizontal="true"
+        android:text="@string/style" />
+    <CheckBox android:id="@+id/checkbox_sports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkbox_style"
+        android:layout_centerHorizontal="true"
+        android:text="@string/sports" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkbox_sports"
+        android:layout_centerHorizontal="true"
+        android:text="@string/save"
+        />
+
+</RelativeLayout>

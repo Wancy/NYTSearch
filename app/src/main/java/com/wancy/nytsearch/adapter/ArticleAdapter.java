@@ -1,7 +1,6 @@
 package com.wancy.nytsearch.adapter;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,10 +26,17 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     private Article mArticle;
     private OnItemClickListener listener;
 
-    public ArticleAdapter(Context context, ArrayList<Article> articles, OnItemClickListener listener) {
+    public ArticleAdapter(Context context, ArrayList<Article> articles) {
         this.mContext = context;
         this.mArticles = articles;
-        this.listener = listener;
+        this.listener = new OnItemClickListener() {
+            @Override
+            public void onItemClick(Article article) {
+                Intent intent = new Intent(mContext, ArticleActivity.class);
+                intent.putExtra("article", mArticle);
+                mContext.startActivity(intent);
+            }
+        };
     }
 
     @Override
@@ -48,11 +53,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        Article article = mArticles.get(position);
-        viewHolder.tvTitle.setText(article.getHeadline());
+        this.mArticle = mArticles.get(position);
+        viewHolder.tvTitle.setText(mArticle.getHeadline());
         viewHolder.ivImage.setImageResource(0);
         Glide.with(mContext)
-                .load(Uri.parse(article.getThumbNail()))
+                .load(Uri.parse(mArticle.getThumbNail()))
                 .placeholder(R.drawable.ic_nocover)
                 .into(viewHolder.ivImage);
     }
@@ -76,8 +81,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         @Override
         public void onClick(View v) {
             listener.onItemClick(mArticle);
-            Intent intent = new Intent(mContext, ArticleActivity.class);
-            mContext.startActivity(intent);
         }
     }
 

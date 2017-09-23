@@ -3,6 +3,7 @@
     package="com.wancy.nytsearch">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -11,14 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.SearchActivity">
+        <activity
+            android:name=".activity.SearchActivity"
+            android:label="@string/articleSearch">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ArticleActivity"></activity>
+        <activity
+            android:name=".activity.ArticleActivity"
+            android:label="@string/articleDetail"></activity>
     </application>
 
 </manifest>

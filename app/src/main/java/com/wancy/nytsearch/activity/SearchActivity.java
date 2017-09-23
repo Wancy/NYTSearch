@@ -2,6 +2,9 @@ package com.wancy.nytsearch.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +19,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.wancy.nytsearch.R;
+import com.wancy.nytsearch.adapter.ArticleAdapter;
 import com.wancy.nytsearch.model.Article;
 
 import org.json.JSONArray;
@@ -26,13 +30,17 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.wancy.nytsearch.R.id.btnSearch;
+import static com.wancy.nytsearch.R.id.etQuery;
+
 public class SearchActivity extends AppCompatActivity {
 
-    EditText etQuery;
-    GridView gvResults;
-    Button btnSearch;
+    private RecyclerView rvArticles;
+    private ArticleAdapter articleAdapter;
+    private ArrayList<Article> articles;
+    private EditText etQuery;
+    private Button btnSearch;
 
-    ArrayList<Article> articles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +48,21 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
-    }
 
-    public void setupView() {
+        rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         etQuery = (EditText) findViewById(R.id.etQuery);
-        gvResults = (GridView) findViewById(R.id.gvResults);
         btnSearch = (Button) findViewById(R.id.btnSearch);
-        articles = new ArrayList<Article>();
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onArticleSearch(view);
+            }
+        });
+
+        articles = new ArrayList<>();
+        articleAdapter = new ArticleAdapter(this, articles);
+        rvArticles.setAdapter(articleAdapter);
+        rvArticles.setLayoutManager(new GridLayoutManager(this, 4));
     }
 
     @Override
@@ -65,6 +81,7 @@ public class SearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfstatement
         if (id == R.id.action_settings) {
+
             return true;
         }
 
@@ -74,7 +91,7 @@ public class SearchActivity extends AppCompatActivity {
     public void onArticleSearch(View view) {
         String query = etQuery.getText().toString();
 
-        Toast.makeText(this, "Searching for" + query, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Searching for " + query, Toast.LENGTH_LONG).show();
 
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
@@ -93,10 +110,18 @@ public class SearchActivity extends AppCompatActivity {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
 
                     articles.addAll(Article.fromJSONArray(articleJsonResults));
+                    // record this value before making any changes to the existing list
+                    int curSize = articleAdapter.getItemCount();
+                    articleAdapter.notifyItemRangeInserted(curSize, articles.size());
                     Log.d("DEBUG", articles.toString());
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
             }
         });
     }

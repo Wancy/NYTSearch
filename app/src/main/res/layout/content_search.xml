@@ -12,8 +12,7 @@
         android:layout_toStartOf="@+id/btnSearch"
         android:ems="10"
         android:hint="@string/hint"
-        android:inputType="textPersonName"
-        android:text="Name" />
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/btnSearch"
@@ -24,8 +23,8 @@
         android:text="@string/search"
         android:onClick="onArticleSearch"/>
 
-    <android.support.v7.app.AlertController.RecycleListView
-        android:id="@+id/gvResults"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvArticles"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"

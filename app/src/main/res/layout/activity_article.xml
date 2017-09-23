@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wancy.nytsearch.activity.ArticleActivity">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:context=".activity.ArticleActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolBar"
         android:minHeight="?attr/actionBarSize"
@@ -14,4 +16,6 @@
         android:background="?attr/colorPrimary">
     </android.support.v7.widget.Toolbar>
 
-</RelativeLayout>
+    <include layout="@layout/content_article"/>
+
+</LinearLayout>
