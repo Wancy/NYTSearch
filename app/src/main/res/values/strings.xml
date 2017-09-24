@@ -13,4 +13,6 @@
     <string name="style">Style</string>
     <string name="sports">Sports</string>
     <string name="save">Save</string>
+    <string name="planets_prompt">prompt</string>
+    <string name="hint2">Click to pick up a date</string>
 </resources>

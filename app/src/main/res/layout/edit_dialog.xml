@@ -21,7 +21,7 @@
         android:layout_below="@+id/tvDate"
         android:layout_centerHorizontal="true"
         android:ems="10"
-        android:inputType="time" />
+        android:hint="@string/hint2"/>
 
     <TextView
         android:id="@+id/tvOrder"
