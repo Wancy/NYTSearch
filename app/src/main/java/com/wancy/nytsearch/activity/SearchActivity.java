@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.wancy.nytsearch.EndlessRecyclerViewScrollListener;
 import com.wancy.nytsearch.R;
 import com.wancy.nytsearch.adapter.ArticleAdapter;
 import com.wancy.nytsearch.fragment.EditDialogFragment;
@@ -130,9 +131,11 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.clear();
                     articles.addAll(Article.fromJSONArray(articleJsonResults));
+                    articleAdapter.notifyDataSetChanged();
                     // record this value before making any changes to the existing list
                     int curSize = articleAdapter.getItemCount();
                     articleAdapter.notifyItemRangeInserted(curSize, articles.size());
+
                     Log.d("DEBUG", articles.toString());
                     rvArticles.invalidate();
                 }catch (JSONException e) {

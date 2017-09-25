@@ -65,16 +65,10 @@
         android:layout_below="@+id/checkbox_arts"
         android:layout_centerHorizontal="true"
         android:text="@string/fashion" />
-    <CheckBox android:id="@+id/checkbox_style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/checkbox_fashion"
-        android:layout_centerHorizontal="true"
-        android:text="@string/style" />
     <CheckBox android:id="@+id/checkbox_sports"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/checkbox_style"
+        android:layout_below="@+id/checkbox_fashion"
         android:layout_centerHorizontal="true"
         android:text="@string/sports" />
 
