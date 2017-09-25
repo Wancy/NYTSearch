@@ -40,7 +40,7 @@
         android:prompt="@string/planets_prompt"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvOrder"
-        android:layout_alignStart="@+id/checkbox_fashion" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/tvCheck"
