@@ -41,6 +41,8 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
     private Button btnSearch;
     private RequestParams params;
     private ArticleClient client;
+    private int page;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
 
     @Override
@@ -53,7 +55,8 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         client = new ArticleClient();
         params = new RequestParams();
         params.put("api-key", "308a1e2428f64bbb97abb8c214ab9d1a");
-        params.put("page", 0);
+        page = 0;
+        params.put("page", page);
 
         rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         etQuery = (EditText) findViewById(R.id.etQuery);
@@ -61,7 +64,7 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onArticleSearch();
+                onArticleSearch(true);
             }
         });
 
@@ -70,12 +73,13 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         rvArticles.setAdapter(articleAdapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         rvArticles.setLayoutManager(gridLayoutManager);
-/*        rvArticles.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
-            public void onLoadMore() {
-                loadNextDataFromApi(page);
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextDataFromApi();
             }
-        });*/
+        };
+        rvArticles.addOnScrollListener(scrollListener);
 
     }
 
@@ -110,11 +114,11 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
     @Override
     public void onFinishEditDialog(RequestParams params) {
         this.params = params;
-        onArticleSearch();
+        onArticleSearch(true);
 
     }
 
-    public void onArticleSearch() {
+    public void onArticleSearch(final Boolean isNewSearch) {
         String query = etQuery.getText().toString();
         //if (query == null || query.length() == 0) return;
         Toast.makeText(this, "Searching for " + query, Toast.LENGTH_LONG).show();
@@ -129,7 +133,10 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
 
                 try{
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    articles.clear();
+                    if (isNewSearch) {
+                        articles.clear();
+                        scrollListener.resetState();
+                    }
                     articles.addAll(Article.fromJSONArray(articleJsonResults));
                     articleAdapter.notifyDataSetChanged();
                     // record this value before making any changes to the existing list
@@ -151,7 +158,9 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
 
     }
 
-    public void loadNextDataFromApi(int offset) {
-
+    public void loadNextDataFromApi() {
+        page++;
+        params.put("page", page);
+        onArticleSearch(false);
     }
 }
