@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -74,9 +75,9 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         articles = new ArrayList<>();
         articleAdapter = new ArticleAdapter(this, articles);
         rvArticles.setAdapter(articleAdapter);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
-        rvArticles.setLayoutManager(gridLayoutManager);
-        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(4, 1);
+        rvArticles.setLayoutManager(staggeredGridLayoutManager);
+        scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 loadNextDataFromApi();
