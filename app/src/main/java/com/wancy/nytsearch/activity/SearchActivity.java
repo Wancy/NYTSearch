@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -39,7 +40,7 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
     private ArrayList<Article> articles;
     private EditText etQuery;
     private Button btnSearch;
-    private RequestParams params;
+    private HashMap<String, String> params;
     private ArticleClient client;
     private int page;
     private EndlessRecyclerViewScrollListener scrollListener;
@@ -53,10 +54,10 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
         client = new ArticleClient();
-        params = new RequestParams();
-        params.put("api-key", "308a1e2428f64bbb97abb8c214ab9d1a");
+        params = new HashMap<>();
+        //params.put("api-key", "308a1e2428f64bbb97abb8c214ab9d1a");
         page = 0;
-        params.put("page", page);
+        params.put("page", String.valueOf(page));
 
         rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
         etQuery = (EditText) findViewById(R.id.etQuery);
@@ -112,7 +113,7 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
     }
 
     @Override
-    public void onFinishEditDialog(RequestParams params) {
+    public void onFinishEditDialog(HashMap<String, String> params) {
         this.params = params;
         onArticleSearch(true);
 
@@ -124,8 +125,16 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         Toast.makeText(this, "Searching for " + query, Toast.LENGTH_LONG).show();
 
         params.put("q", query);
+        String url = "";
+        for (String key : params.keySet()) {
+            String paramString = params.get(key).trim();
+            if (!paramString.equals("") && !paramString.equals("?")) {
+                url += "&" + key;
+                url += "=" + paramString;
+            }
+        }
 
-        client.getArticles(params, new JsonHttpResponseHandler() {
+        client.getArticles(url, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("DEBUG", response.toString());
@@ -160,7 +169,7 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
 
     public void loadNextDataFromApi() {
         page++;
-        params.put("page", page);
+        params.put("page", String.valueOf(page));
         onArticleSearch(false);
     }
 }
