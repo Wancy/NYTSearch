@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.wancy.nytsearch.R;
@@ -20,9 +21,14 @@ import com.wancy.nytsearch.adapter.ArticleAdapter;
 import com.wancy.nytsearch.fragment.EditDialogFragment;
 import com.wancy.nytsearch.model.Article;
 import com.wancy.nytsearch.net.ArticleClient;
-import com.wancy.nytsearch.net.MyJsonHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class SearchActivity extends AppCompatActivity implements EditDialogFragment.EditDialogListener{
@@ -33,15 +39,17 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
     private EditText etQuery;
     private Button btnSearch;
     private RequestParams params;
+    private ArticleClient client;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
-
+        client = new ArticleClient();
         params = new RequestParams();
         params.put("api-key", "308a1e2428f64bbb97abb8c214ab9d1a");
         params.put("page", 0);
@@ -59,7 +67,15 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         articles = new ArrayList<>();
         articleAdapter = new ArticleAdapter(this, articles);
         rvArticles.setAdapter(articleAdapter);
-        rvArticles.setLayoutManager(new GridLayoutManager(this, 4));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+        rvArticles.setLayoutManager(gridLayoutManager);
+/*        rvArticles.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore() {
+                loadNextDataFromApi(page);
+            }
+        });*/
+
     }
 
     @Override
@@ -92,9 +108,9 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
 
     @Override
     public void onFinishEditDialog(RequestParams params) {
-        ArticleClient client = new ArticleClient();
         this.params = params;
-        client.getArticles(this.params, new MyJsonHandler(articles, articleAdapter));
+        onArticleSearch();
+
     }
 
     public void onArticleSearch() {
@@ -102,9 +118,37 @@ public class SearchActivity extends AppCompatActivity implements EditDialogFragm
         //if (query == null || query.length() == 0) return;
         Toast.makeText(this, "Searching for " + query, Toast.LENGTH_LONG).show();
 
-        ArticleClient client = new ArticleClient();
-        this.params.put("q", query);
+        params.put("q", query);
 
-        client.getArticles(this.params, new MyJsonHandler(articles, articleAdapter));
+        client.getArticles(params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", response.toString());
+                JSONArray articleJsonResults = null;
+
+                try{
+                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                    articles.clear();
+                    articles.addAll(Article.fromJSONArray(articleJsonResults));
+                    // record this value before making any changes to the existing list
+                    int curSize = articleAdapter.getItemCount();
+                    articleAdapter.notifyItemRangeInserted(curSize, articles.size());
+                    Log.d("DEBUG", articles.toString());
+                    rvArticles.invalidate();
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+            }
+        });
+
+    }
+
+    public void loadNextDataFromApi(int offset) {
+
     }
 }
